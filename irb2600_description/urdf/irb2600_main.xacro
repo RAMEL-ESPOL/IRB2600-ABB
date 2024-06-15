@@ -2,11 +2,11 @@
 <robot name="abb_irb2600_model" xmlns:xacro="http://ros.org/wiki/xacro">
 
   
-  <xacro:arg name="table" default="true"/>
+  <xacro:arg name="table" default="false"/>
   <xacro:arg name="camera_d435" default="false"/>
   <xacro:arg name="camera_l515" default="false"/>
   <xacro:arg name="vacuum_end" default="false"/>
-  <xacro:arg name="ee_marker" default="true"/>
+  <xacro:arg name="ee_marker" default="false"/>
   <xacro:arg name="base_vacuum_end" default="false"/>
   <xacro:arg name="base_vacuum_end_wall" default="false"/>
   

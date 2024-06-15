@@ -8,6 +8,7 @@
     <arg name="robot" default="false" />
     <arg name="cable" default="false" />
     <arg name="vaccum" default="false" />
+    <arg name="marker" default="false" />
 
     <!-- <group ns="irb120"> -->
 
@@ -29,6 +30,9 @@
     <include if="$(arg vaccum)" file="$(find irb2600_description)/launch/real_irb120_vaccum_moveit.launch" />
 
     <include if="$(arg cable)" file="$(find irb2600_description)/launch/real_irb120_cable_moveit.launch" />   
+
+    <include if="$(arg marker)" file="$(find irb2600_description)/launch/real_irb120_marker_moveit.launch" />   
+
 
     <!-- </group> -->
 
