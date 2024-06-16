@@ -77,8 +77,8 @@ def figure(data_figure : str):
     global fig
     global pen
     if "," in str(data_figure.data):
-        fig = (str(data_figure.data),",").split(",")[0]
-        pen = float((str(data_figure.data),",").split(",")[1])
+        fig = (str(data_figure.data)).split(",")[0]
+        pen = float((str(data_figure.data)).split(",")[1])
     else:
         fig = str(data_figure.data)
 
