@@ -18,29 +18,16 @@
   
   <arg name="use_gui" default="false" />
 
-  <!-- If needed, broadcast static tf for robot root -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world base_mesh" />
-  
-  
-  <group if="$(eval arg('moveit_controller_manager') == 'fake')">
-    <!-- We do not have a real robot connected, so publish fake joint states via a joint_state_publisher
-         MoveIt's fake controller's joint states are considered via the 'source_list' parameter -->
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">
-      <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
-    </node>
-    <!-- Given the published joint states, publish tf for the robot links -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
-  </group>
-  <!-- We do not have a robot connected, so publish fake joint states -->
-  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="$(arg use_gui)"/>
-    <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
-  </node> -->
+  <!-- publish the robot state (tf transforms) -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
+  <!-- load the robot_description parameter before launching ROS-I nodes -->
+  <include file="$(find irb2600_write_moveit)/launch/planning_context.launch" >
+    <arg name="load_robot_description" value="true" />
+  </include>
+  
   <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find irb2600_write_moveit)/launch/move_group.launch">
-    <arg name="moveit_controller_manager" value="$(arg moveit_controller_manager)" />
-    <arg name="load_robot_description" value="true"/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
