@@ -38,7 +38,7 @@ void anglestepCallback(const std_msgs::Float32::ConstPtr& msg)
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "irb2600_arm_control");
+  ros::init(argc, argv, "example_motion");
   ros::NodeHandle node_handle;
   ros::Rate loop_rate(100);
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
   // ros::Subscriber anglestep_sub = node_handle.subscribe("/input/anglestep", 10, anglestepCallback);
   
   
-  moveit::planning_interface::MoveGroupInterface group("irb2600_arm");
+  moveit::planning_interface::MoveGroupInterface group("robot_arm");
   group.setPlanningTime(1);//0.1
 
   ros::AsyncSpinner spinner(10);
@@ -63,12 +63,12 @@ int main(int argc, char **argv)
 
   geometry_msgs::Pose goalpos;
   
-  goalpos.position.x = 1.1;
-  goalpos.position.y = -0.0454133;
-  goalpos.position.z = 1.5; // this is z go down put 0
-  goalpos.orientation.w = 0;
+  goalpos.position.x = 1;
+  goalpos.position.y = 0;
+  goalpos.position.z = 1; // this is z go down put 0
+  goalpos.orientation.w = 0.7;
   goalpos.orientation.x = 0;
-  goalpos.orientation.y = 1;
+  goalpos.orientation.y = 0.7;
   goalpos.orientation.z = 0;
   group.setPoseTarget(goalpos);
 
