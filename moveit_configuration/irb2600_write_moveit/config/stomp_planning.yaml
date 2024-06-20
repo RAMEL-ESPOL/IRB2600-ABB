@@ -1,5 +1,5 @@
-stomp/robot_arm:
-  group_name: robot_arm
+stomp/irb2600_arm:
+  group_name: irb2600_arm
   optimization:
     num_timesteps: 60
     num_iterations: 40

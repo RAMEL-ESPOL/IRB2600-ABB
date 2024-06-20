@@ -13,7 +13,7 @@
   </include>
 
   <!-- Set the robot urdf on the parameter server -->
-  <param name="robot_description" textfile="$(find irb2600_write_moveit)/config/gazebo_abb_irb2600_model.urdf" />
+  <param name="robot_description" command="xacro table:=true ee_marker:=true '$(find irb2600_description)/urdf/irb2600_main.xacro'" />
 
   <!-- Unpause the simulation after loading the robot model -->
   <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
