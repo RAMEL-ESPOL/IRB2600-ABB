@@ -15,7 +15,7 @@ import math
 
 # Altura del lapiz
 global pen 
-pen = 0.97
+pen = 1.03 - 0.008
 
 global quit
 quit = 0
@@ -24,7 +24,7 @@ global theta
 theta = 0
 
 global t
-t = 0.05
+t = 0.02
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 
@@ -32,11 +32,11 @@ y_h = 1.2
 
 #Tamaño de cada letra en ancho y alto
 global size
-size = 0.1
+size = 0.12
 
 #Espacio entre cada letra
 global space
-space = 0.02
+space = 0.008
 
 #Altura cuando se levanta el l
 def home():

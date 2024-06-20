@@ -15,7 +15,7 @@ import math
 
 # Altura del lapiz
 global pen 
-pen = 1.2
+pen = 1.05 #- 0.003
 
 global quit
 quit = 0
@@ -24,15 +24,15 @@ global theta
 theta = 0
 
 global t
-t = 0.0008
+t = 0.05
 
 #Altura máxima a la que llegará cada letra en Y
-global y_h 
+global y_h
 y_h = 1.2
 
 #Tamaño de cada letra en ancho y alto
 global size
-size = 0.05
+size = 0.1
 
 #Espacio entre cada letra
 global space
@@ -122,11 +122,10 @@ rate = rospy.Rate(10)
 
 robot = moveit_commander.RobotCommander()
 scene = moveit_commander.PlanningSceneInterface()    
-group = moveit_commander.MoveGroupCommander("robot_arm")
+group = moveit_commander.MoveGroupCommander("irb2600_arm")
 display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
 data_writing_publisher = rospy.Publisher('/figure_writing', String, queue_size=2)
 data_writing_publisher.publish(("_none," + str(pen)))
-home()
 # Calling ``stop()`` ensures that there is no residual movement
 group.stop()
 wpose = group.get_current_pose().pose
@@ -149,5 +148,4 @@ group.execute(plan, wait=True)
 rospy.loginfo("Planning succesfully executed.\n")
 rospy.sleep(1)
 data_writing_publisher.publish("_none")
-rospy.logerr("The word has too many letters.")
-home()
+
