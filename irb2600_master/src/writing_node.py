@@ -13,18 +13,6 @@ from visualization_msgs.msg import Marker, MarkerArray
 
 global pos
 pos =       [0.0,0.0,0.0,0.0,0.0,0.0]
-global real_pos
-real_pos =  [0.0,0.0,0.0,0.0,0.0,0.0]
-global torque
-torque =    [0.0,0.0,0.0,0.0,0.0,0.0]
-global real_vel
-real_vel =  [0.0,0.0,0.0,0.0,0.0,0.0]
-
-global ruta_file
-ruta_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'matlab', 'data')
-
-global new_file
-new_file  = False
 
 global fig
 fig = '_none'

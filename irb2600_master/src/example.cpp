@@ -12,28 +12,41 @@ using namespace std;
 
 geometry_msgs::PoseArray pos_connectors;
 geometry_msgs::Pose goalpos;
-float step = 0.005;
+float step = 0.00005;
 float anglestep = 1.0;
 
-void posCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
-{
-  goalpos.position.x = msg->pose.position.x;
-  goalpos.position.y = msg->pose.position.y;
-  goalpos.position.z = msg->pose.position.z;
-  goalpos.orientation.w = msg->pose.orientation.w;
-  goalpos.orientation.x = msg->pose.orientation.x;
-  goalpos.orientation.y = msg->pose.orientation.y;
-  goalpos.orientation.z = msg->pose.orientation.z;
+void home(moveit::planning_interface::MoveGroupInterface& move_group) {
+    // Get the current joint values
+    std::vector<double> joint_group_positions;
+    joint_group_positions = move_group.getCurrentJointValues();
+
+    // Set the desired joint values (home position)
+    joint_group_positions[0] = 0.0;
+    joint_group_positions[1] = 0.0;
+    joint_group_positions[2] = 0.0;
+    joint_group_positions[3] = 0.0;
+    joint_group_positions[4] = 1.57;
+    joint_group_positions[5] = 0.0;
+
+    // Plan to the new joint space goal
+    move_group.setJointValueTarget(joint_group_positions);
+
+    // Execute the plan
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    bool success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    if (success) {
+        move_group.move();
+        ROS_INFO("The robotic arm is at home position.");
+    } else {
+        ROS_WARN("Failed to plan to home position.");
+    }
 }
 
-void stepCallback(const std_msgs::Float32::ConstPtr& msg)
+void posCallback(const geometry_msgs::PoseArray::ConstPtr& msg)
 {
-  step = msg->data;
-}
+  pos_connectors.poses = msg->poses;
 
-void anglestepCallback(const std_msgs::Float32::ConstPtr& msg)
-{
-  anglestep = msg->data;
 }
 
 int main(int argc, char **argv)
@@ -43,51 +56,58 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(100);
 
   // ros::Subscriber vel_sub = node_handle.subscribe("/input/vel", 10, velCallback);
-  // ros::Subscriber pos_sub = node_handle.subscribe("/input/pos", 10, posCallback);
+  ros::Subscriber pos_sub = node_handle.subscribe("/planning_poses", 10, posCallback);
   // ros::Subscriber step_sub = node_handle.subscribe("/input/step", 10, stepCallback);
   // ros::Subscriber anglestep_sub = node_handle.subscribe("/input/anglestep", 10, anglestepCallback);
   
   
-  moveit::planning_interface::MoveGroupInterface group("robot_arm");
-  group.setPlanningTime(1);//0.1
+  moveit::planning_interface::MoveGroupInterface move_group("robot_arm");
+  move_group.setPlanningTime(1);//0.1
 
   ros::AsyncSpinner spinner(10);
   spinner.start();
 
   geometry_msgs::Pose current_pose;
-  current_pose = group.getCurrentPose().pose;
-  // goalpos = current_pose;
+  current_pose = move_group.getCurrentPose().pose;
 
-  // group.setPoseTarget(goalpos);
+  // std::vector<geometry_msgs::Pose> waypoints;
+  // waypoints.push_back(current_pose);
 
+  // current_pose.position.z -= 0.2;
+  // waypoints.push_back(current_pose);  // down
 
-  geometry_msgs::Pose goalpos;
-  
-  goalpos.position.x = 1;
-  goalpos.position.y = 0;
-  goalpos.position.z = 1; // this is z go down put 0
-  goalpos.orientation.w = 0.7;
-  goalpos.orientation.x = 0;
-  goalpos.orientation.y = 0.7;
-  goalpos.orientation.z = 0;
-  group.setPoseTarget(goalpos);
+  // pos_connectors.poses = waypoints;
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
   int key=0;
   std::cout << std::fixed;
   std::cout.precision(3);
 
+  home(move_group);
+
+
   while(ros::ok())
   {
-    // std::cout << "x: " << goalpos.position.x << "  y: " << goalpos.position.y << "  z: " << goalpos.position.z << "  yaw: " << atan2(2*(goalpos.orientation.w*goalpos.orientation.z + goalpos.orientation.x*goalpos.orientation.y), (1 - 2*(goalpos.orientation.y*goalpos.orientation.y + goalpos.orientation.z*goalpos.orientation.z)))/3.141592*180.0 -180.0<< "  pitch: " << asin(2*(goalpos.orientation.w*goalpos.orientation.y - goalpos.orientation.z*goalpos.orientation.x))/3.141592*180.0 << "  step: " << step <<"  anglestep: " << anglestep *2 <<std::endl;
-    std::cout << "x: " << goalpos.position.x << "  y: " << goalpos.position.y << "  z: " << goalpos.position.z << "  w: " << goalpos.orientation.w << "  xa: " << goalpos.orientation.x << "  ya: " << goalpos.orientation.y << "  za: " << goalpos.orientation.z <<std::endl;
+    // std::cout << "x: " << goalpos.position.x << "  y: " << goalpos.position.y << "  z: " << goalpos.position.z << "  w: " << goalpos.orientation.w << "  xa: " << goalpos.orientation.x << "  ya: " << goalpos.orientation.y << "  za: " << goalpos.orientation.z <<std::endl;
+    if (!(pos_connectors.poses).empty())
+    {
+      // std::cout << "PoseArray: \n" << pos_connectors<<std::endl;
 
-    group.setPoseTarget(goalpos);
-    group.plan(my_plan);
-    group.move();
+      moveit_msgs::RobotTrajectory trajectory;
+      double fraction = move_group.computeCartesianPath(pos_connectors.poses, step, 0, trajectory);
+      std::cout << fraction <<std::endl;
+      my_plan.trajectory_ = trajectory;
+
+      // Execute the plan
+      bool success = (move_group.execute(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      ROS_WARN_NAMED("tutorial", "Visualizing plan 4 (Cartesian path) (%.2f%% acheived)", fraction * 100.0);
+
+      pos_connectors.poses.clear();    
 
     loop_rate.sleep();
-    ros::spinOnce();
+    home(move_group);
+    // ros::spinOnce();
+    }
   }
 
   return 0;
