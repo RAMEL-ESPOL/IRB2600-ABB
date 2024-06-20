@@ -10,17 +10,10 @@
 
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
-
-  <!-- Choose controller manager: fake, simple, or ros_control -->
-  <arg name="moveit_controller_manager" default="fake" />
-  <!-- Set execution mode for fake execution controllers -->
-  <arg name="fake_execution_type" default="interpolate" />
   
   <arg name="use_gui" default="false" />
 
-  <!-- publish the robot state (tf transforms) -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
+  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
   <include file="$(find irb2600_write_moveit)/launch/planning_context.launch" >
     <arg name="load_robot_description" value="true" />
