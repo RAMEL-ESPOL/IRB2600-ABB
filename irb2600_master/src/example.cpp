@@ -61,7 +61,7 @@ int main(int argc, char **argv)
   // ros::Subscriber anglestep_sub = node_handle.subscribe("/input/anglestep", 10, anglestepCallback);
   
   
-  moveit::planning_interface::MoveGroupInterface move_group("robot_arm");
+  moveit::planning_interface::MoveGroupInterface move_group("irb2600_arm");
   move_group.setPlanningTime(1);//0.1
 
   ros::AsyncSpinner spinner(10);

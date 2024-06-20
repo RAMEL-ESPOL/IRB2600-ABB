@@ -733,7 +733,7 @@ moveit_commander.roscpp_initialize(sys.argv)
 rospy.init_node('planing_node', anonymous=True)
 rate = rospy.Rate(10)
 
-group = moveit_commander.MoveGroupCommander("robot_arm")
+group = moveit_commander.MoveGroupCommander("irb2600_arm")
 pose_pub               = rospy.Publisher('/planning_poses', PoseArray, queue_size=2) 
 data_writing_publisher = rospy.Publisher('/figure_writing', String, queue_size=2)
 data_writing_publisher.publish(("_none," + str(pen)))

@@ -422,7 +422,7 @@ rate = rospy.Rate(10)
 
 robot = moveit_commander.RobotCommander()
 scene = moveit_commander.PlanningSceneInterface()    
-group = moveit_commander.MoveGroupCommander("robot_arm")
+group = moveit_commander.MoveGroupCommander("irb2600_arm")
 display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
 data_writing_publisher = rospy.Publisher('/figure_writing', String, queue_size=2)
 data_writing_publisher.publish(("_none"))
