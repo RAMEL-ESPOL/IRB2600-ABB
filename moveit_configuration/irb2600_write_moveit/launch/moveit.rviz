@@ -70,92 +70,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          base_mesh:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ee:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          end_effect_point:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          flange:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          link_1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          table:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          wall_back:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wall_left:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wall_right:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -202,92 +116,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          base_mesh:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ee:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          end_effect_point:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          flange:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          link_1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link_6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          table:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          wall_back:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wall_left:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wall_right:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -395,6 +223,14 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: visualization_marker_array
+      Name: MarkerArray
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

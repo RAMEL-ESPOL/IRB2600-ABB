@@ -18,7 +18,7 @@ global fig
 fig = '_none'
 
 global pen
-pen = 0.97
+pen = 1.03 - 0.008
 
 global marker_array
 marker_array = MarkerArray()
@@ -28,14 +28,14 @@ marker = Marker()
 marker.header.frame_id = "base_link"
 marker.type = marker.POINTS
 marker.action = marker.ADD
-marker.scale.x = 0.008
-marker.scale.y = 0.008
+marker.scale.x = 0.0035
+marker.scale.y = 0.0035
 marker.scale.z = 0
 marker.color.r = 0.0
 marker.color.g = 0.0
 marker.color.b = 0.0
 marker.color.a = 1.0
-marker.lifetime = rospy.Duration(50)
+marker.lifetime = rospy.Duration(10)
 
 #Recibimos del Subscriber un msg de tipo JointState de moveit y posteriormente lo publicamos con el Publisher como goal
 def state_position(goal_state: JointState):
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     marker_pub      = rospy.Publisher("/visualization_marker_array", MarkerArray, queue_size = 2)
     subGoalState    = rospy.Subscriber("/joint_states", JointState, callback = state_position)
     subWritingData  = rospy.Subscriber("/figure_writing", String, callback = figure)
-    group           = moveit_commander.MoveGroupCommander("robot_arm")
+    group           = moveit_commander.MoveGroupCommander("irb2600_arm")
 
     rospy.logwarn("The writing_node has been started")
     rospy.spin()

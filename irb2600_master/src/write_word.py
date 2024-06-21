@@ -32,11 +32,11 @@ y_h = 1.2
 
 #Tamaño de cada letra en ancho y alto
 global size
-size = 0.12
+size = 0.06
 
 #Espacio entre cada letra
 global space
-space = 0.008
+space = 0.02
 
 #Altura cuando se levanta el l
 def home():
@@ -148,7 +148,7 @@ def plan_B(wpose, waypoints : list):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, size*0.15, -size*0.15)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0, 0.2)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.2*size)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, -size*0.15, -size*0.15)
 
@@ -371,8 +371,6 @@ def plan_J(wpose, waypoints : list):
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
-
-    (wpose, waypoints) = pen_up_down(wpose, waypoints)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, -size*0.5, 0)
 
@@ -691,8 +689,6 @@ def plan_Y(wpose, waypoints : list):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size*0.5)
 
-    (wpose, waypoints) = pen_up_down(wpose, waypoints)
-
     (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
@@ -702,8 +698,6 @@ def plan_Y(wpose, waypoints : list):
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
-
-    (wpose, waypoints) = pen_up_down(wpose, waypoints)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
 
@@ -748,12 +742,10 @@ if (((space + size)*len(word)) <= 0.5):
     waypoints = []
 
     x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
-    print(x_i)
     #Moviendo lápiz a la posición inicial
     (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h, pen + 0.02)
 
     for w in word:
-        rospy.logerr(w)
         (waypoints, wpose) = (plan_A(wpose,waypoints) if w == "A" else
                              (plan_B(wpose,waypoints) if w == "B" else
                              (plan_C(wpose,waypoints) if w == "C" else
