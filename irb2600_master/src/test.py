@@ -15,7 +15,7 @@ import math
 
 # Altura del lapiz
 global pen 
-pen = 1.05 #- 0.003
+pen = 1.0 
 
 global quit
 quit = 0
@@ -24,7 +24,7 @@ global theta
 theta = 0
 
 global t
-t = 0.05
+t = 0.1
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h
@@ -130,7 +130,6 @@ data_writing_publisher.publish(("_none," + str(pen)))
 group.stop()
 wpose = group.get_current_pose().pose
 waypoints = []
-
 (wpose, waypoints) = set_pen(wpose, waypoints, 0, y_h, pen)
 
 data_writing_publisher.publish("_" + str("test").lower() + "," + str(pen))

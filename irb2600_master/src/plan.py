@@ -29,7 +29,7 @@ global rmatrix
 rmatrix = SE3.Ry(theta,'deg')
 
 global t
-t = 0.02
+t = 0.1
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 

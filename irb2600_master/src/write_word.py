@@ -15,7 +15,7 @@ import math
 
 # Altura del lapiz
 global pen 
-pen = 1.03 - 0.008
+pen = 1
 
 global quit
 quit = 0
@@ -24,19 +24,19 @@ global theta
 theta = 0
 
 global t
-t = 0.02
+t = 0.1
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 
-y_h = 1.2
+y_h = 1.0 #ramel
 
 #Tamaño de cada letra en ancho y alto
 global size
-size = 0.045
+size = 0.07
 
 #Espacio entre cada letra
 global space
-space = 0.005
+space = 0.0075
 
 #Altura cuando se levanta el l
 def home():
@@ -738,7 +738,7 @@ group.stop()
 wpose = group.get_current_pose().pose
 
 word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
-if (((space + size)*len(word)) <= 0.5):
+if (((space + size)*len(word)) <= 0.9):
     waypoints = []
 
     x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
