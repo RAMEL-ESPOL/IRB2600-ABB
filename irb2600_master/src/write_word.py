@@ -32,11 +32,11 @@ y_h = 1.2
 
 #Tamaño de cada letra en ancho y alto
 global size
-size = 0.06
+size = 0.045
 
 #Espacio entre cada letra
 global space
-space = 0.02
+space = 0.005
 
 #Altura cuando se levanta el l
 def home():
