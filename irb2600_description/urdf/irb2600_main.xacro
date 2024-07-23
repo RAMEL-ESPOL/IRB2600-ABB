@@ -7,6 +7,7 @@
   <xacro:arg name="camera_l515" default="false"/>
   <xacro:arg name="vacuum_end" default="false"/>
   <xacro:arg name="ee_marker" default="false"/>
+  <xacro:arg name="garra" default="false"/>
   <xacro:arg name="base_vacuum_end" default="false"/>
   <xacro:arg name="base_vacuum_end_wall" default="false"/>
   
@@ -51,4 +52,8 @@
     <xacro:include filename="$(find irb2600_description)/urdf/ee_marker.xacro"/>
   </xacro:if>
 
+  <!-- robot Garra End Effector -->
+  <xacro:if value="$(arg garra)">
+    <xacro:include filename="$(find irb2600_description)/urdf/garra.xacro"/>
+  </xacro:if>
 </robot>
