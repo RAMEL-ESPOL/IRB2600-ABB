@@ -29,12 +29,24 @@ The following packages are also neccesary but you must install it by cloning fro
 * ros-melodic-abb
 * ros-noetic-abb-driver
 
-instalar tambien desde github 
-https://github.com/ros-industrial/abb.git
+We also need to install the following projects to make the trajectories.
+```
+sudo pip install spatialmath-rospy
+```
+```
+sudo pip install spatialmath-python
+```
+```
+sudo pip install -U numpy
+```
+These projects belong respectively to [SpatialMath Rospy](https://pypi.org/project/spatialmath-rospy/) and [SpatialMath Python](https://pypi.org/project/spatialmath-python/).
 
 Now, Extract the metapackage `IRB2600-ABB` into `${ros_workspace}/src`. `catkin_make` your workspace.
 
-**WARNING: If you planing use grippers with this robot. You need copy the gripper package https://github.com/fryumbla/Robotiq-grippers.git (In construction)**
+We also need to add the [ABB](https://github.com/ros-industrial/abb.git) repository from 
+ROS-Industrial into `${ros_workspace}/src`.
+
+**WARNING: If you planing use grippers with this robot. You need copy the [gripper package](https://github.com/fryumbla/Robotiq-grippers.git) (In construction)**
 
 *If you want control with the joystick control. You need install: `sudo pip install ds4drv`
 
@@ -70,7 +82,6 @@ Open terminal and `roscore` and `Enter`.
 1. Launch the robot in gazebo
    ```
    roslaunch irb2600_gazebo irb2600_gazebo.launch
-
    ```
 
 ### 3.2. Real Robot
