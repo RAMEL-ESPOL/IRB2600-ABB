@@ -17,7 +17,16 @@ def perform_trajectory():
     
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
-    group.go(joint_goal, wait=True)
+    # Plan the trajectory
+
+    group.set_joint_value_target(joint_goal)
+    success, plan, _, _ = group.plan()
+
+    # Check if the plan is successful
+    if success and len(plan.joint_trajectory.points) > 0:
+        group.execute(plan, wait=True)
+    else:
+        rospy.logerr("Failed to generate a valid plan for the joint values provided.")
 
 
 if __name__ == '__main__':
