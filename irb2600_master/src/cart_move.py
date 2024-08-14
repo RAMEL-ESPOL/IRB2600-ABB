@@ -25,9 +25,9 @@ def perform_trajectory():
     
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
-    wpose.position.x += goal_pose[0]
-    wpose.position.y += goal_pose[1]
-    wpose.position.z += goal_pose[2]
+    wpose.position.x = goal_pose[0]
+    wpose.position.y = goal_pose[1]
+    wpose.position.z = goal_pose[2]
     waypoints.append(copy.deepcopy(wpose))
 
     plan  = group.compute_cartesian_path(waypoints, 0.1, 0.0)[0]
