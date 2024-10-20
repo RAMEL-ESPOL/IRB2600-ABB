@@ -64,4 +64,8 @@
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
 
+
+  <node name="writing_node" pkg="irb2600_master" type="writing_node.py" respawn="false" output="screen" if="$(arg use_rviz)">
+  </node>
+
 </launch>
