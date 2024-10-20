@@ -1020,24 +1020,67 @@ def plan_times(wpose, waypoints : list):
 
     return (waypoints, wpose)
 
+
+def plan_circle( center_x : float , center_y : float , r : float , theta_o : float  , theta_f : float , wpose, circle_waypoints : list , sentido_x : bool, sentido_y : bool):
+    
+    if (sentido_x and sentido_y):
+        for theta in range(theta_o, theta_f + 1, 2):
+            wpose.position.y = center_y + r*math.sin(theta*math.pi/180)
+            wpose.position.x = center_x + r*math.cos(theta*math.pi/180)
+            circle_waypoints.append(copy.deepcopy(wpose))
+    elif (not(sentido_x) and sentido_y):
+        for theta in range(theta_o, theta_f + 1, 2):
+            wpose.position.y = center_y + r*math.sin(theta*math.pi/180)
+            wpose.position.x = center_x - r*math.cos(theta*math.pi/180)
+            circle_waypoints.append(copy.deepcopy(wpose))
+    elif (sentido_x and not(sentido_y)):
+        for theta in range(theta_o, theta_f + 1, 2):
+            wpose.position.y = center_y - r*math.sin(theta*math.pi/180)
+            wpose.position.x = center_x + r*math.cos(theta*math.pi/180)
+            circle_waypoints.append(copy.deepcopy(wpose))
+    else:
+        for theta in range(theta_o, theta_f + 1, 2):
+            wpose.position.y = center_y - r*math.sin(theta*math.pi/180)
+            wpose.position.x = center_x - r*math.cos(theta*math.pi/180)
+            circle_waypoints.append(copy.deepcopy(wpose))
+
+    return wpose, circle_waypoints
+
+
 def plan_divide(wpose, waypoints : list):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.5*size, 0)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + space/2, -0.25*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.5*size, -size)
+    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 0, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, -0.25*size)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.5*size, 0)
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.5*size + space, y_h)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, -0.25*size)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x - space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 1, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + 1.5*space, y_h)
 
     return (waypoints, wpose)
 
 
 def plan_equal(wpose, waypoints : list):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.33*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 2*space, -0.33*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
@@ -1059,7 +1102,7 @@ def plan_equal(wpose, waypoints : list):
 
 def plan_left_parenthesis(wpose, waypoints : list):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size, 0)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size + 1.5*space, 0)
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
@@ -1071,12 +1114,14 @@ def plan_left_parenthesis(wpose, waypoints : list):
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, space, y_h)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 2.5*space, y_h)
 
     return (waypoints, wpose)
 
 def plan_right_parenthesis(wpose, waypoints : list):
 
+    (wpose, waypoints) = move_pen(wpose, waypoints, 2.5*space, 0)
+
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size, -0.15*size)
@@ -1087,7 +1132,7 @@ def plan_right_parenthesis(wpose, waypoints : list):
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size + space, y_h)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size + 2.5*space, y_h)
 
     return (waypoints, wpose)
 
@@ -1116,7 +1161,8 @@ group.stop()
 wpose = group.get_current_pose().pose
 
 word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
-if (((space + size)*len(word)) <= 0.9):
+
+if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 1.5):
     waypoints = []
 
     x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
