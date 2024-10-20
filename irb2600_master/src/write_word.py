@@ -12,23 +12,28 @@ from std_msgs.msg import Header
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 import math
+from spatialmath_rospy import to_spatialmath, to_ros
+from spatialmath import SE3, SO3
 
 # Altura del lapiz
 global pen 
-pen = 1
+#pen = 1
+pen = -1.3 #pizarra
 
 global quit
 quit = 0
 
 global theta
-theta = 0
+#theta = 0
+theta = -90 #pizarra
 
 global t
 t = 0.1
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 
-y_h = 1.0 #ramel
+#y_h = 1.0 
+y_h = 1.5 #pizarra
 
 #Tamaño de cada letra en ancho y alto
 global size
@@ -36,7 +41,10 @@ size = 0.07
 
 #Espacio entre cada letra
 global space
-space = 0.0075
+space = 0.01
+
+global rmatrix
+rmatrix = SE3.Ry(theta,'deg')
 
 #Altura cuando se levanta el l
 def home():
@@ -46,7 +54,7 @@ def home():
     joint_goal[1] = 0
     joint_goal[2] = 0
     joint_goal[3] = 0
-    joint_goal[4] = 1.57
+    joint_goal[4] = 0
     joint_goal[5] = 0
 
     # The go command can be called with joint values, poses, or without any
@@ -88,6 +96,18 @@ def down_pen(wpose, waypoints : list):
     waypoints.append(copy.deepcopy(wpose))
 
     return wpose, waypoints
+
+def plane_rotation(waypoints : list):
+    way = []
+    for i in range(len(waypoints)):
+        #Primer elemento del producto es la parte de traslación de la matriz de transformación la cual usa las coordenadas cartsianas de cada pose (wpose)
+        #Segundo y tercer elementos del producto son las rotaciones necesarias para que el efector final esté perpendicular al plano XY
+        T = (SE3(waypoints[i].position.x, waypoints[i].position.y, waypoints[i].position.z)) * (SE3.Rz(-88, 'deg')) * (SE3.Rx(180, 'deg'))
+      
+        #La matriz T representa la orientación y posición del efector final con respecto al plano XY original, al multiplicarla por 
+        #la matriz de rotación obtenemos la orientación y posición del efector con respecto al plano con la inclinación indicada
+        way.append(copy.deepcopy(to_ros(rmatrix*T)))
+    return way
     
 def move_pen(wpose, waypoints : list, d_x : float, d_y: float, d_z : float = 0):
     #Se copia la pose actual para únicamente modificar las coordenadas cartesianas y que la orientación
@@ -1169,6 +1189,7 @@ if (((space + size)*len(word)) <= 0.9):
                              (plan_left_parenthesis(wpose,waypoints) if w == "(" else 
                              (plan_right_parenthesis(wpose,waypoints) if w == ")" else 
                              []))))))))))))))))))))))))))))))))))))))))))))
+    waypoints = (plane_rotation(waypoints) if theta != 0 else waypoints)
         
     data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
     rospy.sleep(1)

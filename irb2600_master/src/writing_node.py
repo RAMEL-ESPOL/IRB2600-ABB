@@ -71,6 +71,7 @@ def figure(data_figure : str):
         fig = str(data_figure.data)
 
 if __name__ == "__main__":
+    rospy.sleep(2)
     rospy.init_node("writing_node")
     moveit_commander.roscpp_initialize(sys.argv)
     marker_pub      = rospy.Publisher("/visualization_marker_array", MarkerArray, queue_size = 2)
