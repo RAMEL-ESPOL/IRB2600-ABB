@@ -1077,7 +1077,15 @@ def plan_divide(wpose, waypoints : list):
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
     
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, -0.25*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.5*size)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 0, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, 0.25*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
@@ -1085,15 +1093,7 @@ def plan_divide(wpose, waypoints : list):
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, -0.25*size)
-
-    (wpose, waypoints) = down_pen(wpose, waypoints)
-
-    (wpose, waypoints) = plan_circle(wpose.position.x - space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 1, 1)
-
-    (wpose, waypoints) = up_pen(wpose, waypoints)
-
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + 1.5*space, y_h)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 1.5*space, y_h)
 
     return (waypoints, wpose)
 
