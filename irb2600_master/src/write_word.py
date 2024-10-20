@@ -17,23 +17,23 @@ from spatialmath import SE3, SO3
 
 # Altura del lapiz
 global pen 
-#pen = 1
-pen = -1.3 #pizarra
+pen = 1
+#pen = -1.3 #pizarra
 
 global quit
 quit = 0
 
 global theta
-#theta = 0
-theta = -90 #pizarra
+theta = 0
+#theta = -90 #pizarra
 
 global t
 t = 0.1
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 
-#y_h = 1.0 
-y_h = 1.5 #pizarra
+y_h = 1.0 
+#y_h = 1.5 #pizarra
 
 #Tamaño de cada letra en ancho y alto
 global size
@@ -54,7 +54,7 @@ def home():
     joint_goal[1] = 0
     joint_goal[2] = 0
     joint_goal[3] = 0
-    joint_goal[4] = 0
+    joint_goal[4] = 1.57
     joint_goal[5] = 0
 
     # The go command can be called with joint values, poses, or without any
