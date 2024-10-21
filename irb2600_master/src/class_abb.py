@@ -26,6 +26,10 @@ if __name__ == "__main__":
 
     write_word.write("y=2x+8", 0.9)
 
-    write_word.write("Ecuacion factorizada!")
+    write_word.write("Ecuacion factorizada!", 0.8)
+
+    write_word.write("23", 0.7, 0.01)
+
+    
 
     
