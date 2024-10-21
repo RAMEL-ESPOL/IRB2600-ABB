@@ -62,8 +62,10 @@ def home():
     group.go(joint_goal, wait=True)
     rospy.loginfo("The robotic arm is at home position.")
 
+
 def loginfog(msg: str):
     rospy.loginfo("\033[92m%s\033[0m" % msg)
+
 
 def print_plan(w: list, s: str):
     message = "\n--------------------------------------------------------------"
@@ -75,6 +77,7 @@ Pose {0}:\n{1}
     rospy.loginfo(message)
     loginfog("Drawing a " + s)
 
+
 def pen_up_down(wpose, waypoints : list):
     wpose.position.z = pen + 0.02
     waypoints.append(copy.deepcopy(wpose))
@@ -84,11 +87,13 @@ def pen_up_down(wpose, waypoints : list):
 
     return wpose, waypoints
 
+
 def up_pen(wpose, waypoints : list):
     wpose.position.z = pen + 0.02
     waypoints.append(copy.deepcopy(wpose))
 
     return wpose, waypoints
+
 
 def down_pen(wpose, waypoints : list):
 
@@ -96,6 +101,7 @@ def down_pen(wpose, waypoints : list):
     waypoints.append(copy.deepcopy(wpose))
 
     return wpose, waypoints
+
 
 def plane_rotation(waypoints : list):
     way = []
@@ -108,7 +114,8 @@ def plane_rotation(waypoints : list):
         #la matriz de rotación obtenemos la orientación y posición del efector con respecto al plano con la inclinación indicada
         way.append(copy.deepcopy(to_ros(rmatrix*T)))
     return way
-    
+
+
 def move_pen(wpose, waypoints : list, d_x : float, d_y: float, d_z : float = 0):
     #Se copia la pose actual para únicamente modificar las coordenadas cartesianas y que la orientación
     #del efector final no se vea modificada, de esta manera mantenemos el lápiz perpendicular al suelo
@@ -122,6 +129,7 @@ def move_pen(wpose, waypoints : list, d_x : float, d_y: float, d_z : float = 0):
     waypoints.append(copy.deepcopy(wpose))
 
     return (wpose, waypoints)
+
 
 def set_pen(wpose, waypoints : list, p_x : float, p_y: float, p_z : float = 0):
     
@@ -772,6 +780,7 @@ def plan_1(wpose, waypoints : list):
 
     return (waypoints, wpose)
 
+
 def plan_2(wpose, waypoints : list):
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
@@ -982,6 +991,7 @@ def plan_0(wpose, waypoints : list):
 
     return (waypoints, wpose)
 
+
 def plan_minus(wpose, waypoints : list):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.5*size)
@@ -995,6 +1005,7 @@ def plan_minus(wpose, waypoints : list):
     (wpose, waypoints) = move_pen(wpose, waypoints, space, y_h)
 
     return (waypoints, wpose)
+
 
 def plan_plus(wpose, waypoints : list):
 
@@ -1017,6 +1028,7 @@ def plan_plus(wpose, waypoints : list):
     (wpose, waypoints) = move_pen(wpose, waypoints, space, y_h)
 
     return (waypoints, wpose)
+
 
 def plan_times(wpose, waypoints : list):
 
@@ -1120,6 +1132,7 @@ def plan_equal(wpose, waypoints : list):
 
     return (waypoints, wpose)
 
+
 def plan_left_parenthesis(wpose, waypoints : list):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size + 1.5*space, 0)
@@ -1137,6 +1150,7 @@ def plan_left_parenthesis(wpose, waypoints : list):
     (wpose, waypoints) = move_pen(wpose, waypoints, 2.5*space, y_h)
 
     return (waypoints, wpose)
+
 
 def plan_right_parenthesis(wpose, waypoints : list):
 
@@ -1157,6 +1171,29 @@ def plan_right_parenthesis(wpose, waypoints : list):
     return (waypoints, wpose)
 
 
+def plan_exclamation(wpose, waypoints : list):
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 1.5*space, 0)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.7*size)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.05*size, -0.25*size)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x + 0.05*size, wpose.position.y, 0.05*size, 0, 360, wpose, waypoints, 0, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 2*space, y_h)
+
+    return (waypoints, wpose)
+
+
 def plan_(wpose, waypoints : list):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, 0)
@@ -1164,94 +1201,104 @@ def plan_(wpose, waypoints : list):
     return (waypoints, wpose)
 
 
-#By executing this file we can make the robot move to several preconfigured positions in Cartesian coordinates, in the order in which they are in the file
-moveit_commander.roscpp_initialize(sys.argv)
-rospy.init_node('planing_node', anonymous=True)
-rate = rospy.Rate(10)
+def write(word: str, y_h2: float = y_h, size2: float = size, space2: float = space, pen2: float = pen, theta2: float = theta):
+    """Función para escribir una palabra enviando todos los parámetros necesarios para esto, no es necesario enviar pen y theta como parámetros"""
+    size  = size2
+    y_h   = y_h2
+    space = space2
+    robot = moveit_commander.RobotCommander()
+    scene = moveit_commander.PlanningSceneInterface()    
+    group = moveit_commander.MoveGroupCommander("irb2600_arm")
+    display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
+    data_writing_publisher       = rospy.Publisher('/figure_writing', String, queue_size=2)
+    data_writing_publisher.publish(("_none," + str(pen)))
+    # Calling ``stop()`` ensures that there is no residual movement
+    group.stop()
+    wpose = group.get_current_pose().pose
 
-robot = moveit_commander.RobotCommander()
-scene = moveit_commander.PlanningSceneInterface()    
-group = moveit_commander.MoveGroupCommander("irb2600_arm")
-display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
-data_writing_publisher = rospy.Publisher('/figure_writing', String, queue_size=2)
-data_writing_publisher.publish(("_none," + str(pen)))
-home()
-# Calling ``stop()`` ensures that there is no residual movement
-group.stop()
-wpose = group.get_current_pose().pose
+    if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 1.5):
+        waypoints = []
 
-word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
+        x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
+        #Moviendo lápiz a la posición inicial
+        (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h, pen + 0.02)
 
-if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 1.5):
-    waypoints = []
+        for w in word:
+            (waypoints, wpose) = (plan_A(wpose,waypoints) if w == "A" else
+                                 (plan_B(wpose,waypoints) if w == "B" else
+                                 (plan_C(wpose,waypoints) if w == "C" else
+                                 (plan_D(wpose,waypoints) if w == "D" else
+                                 (plan_E(wpose,waypoints) if w == "E" else
+                                 (plan_F(wpose,waypoints) if w == "F" else
+                                 (plan_G(wpose,waypoints) if w == "G" else
+                                 (plan_H(wpose,waypoints) if w == "H" else
+                                 (plan_I(wpose,waypoints) if w == "I" else
+                                 (plan_J(wpose,waypoints) if w == "J" else
+                                 (plan_K(wpose,waypoints) if w == "K" else
+                                 (plan_L(wpose,waypoints) if w == "L" else
+                                 (plan_M(wpose,waypoints) if w == "M" else
+                                 (plan_N(wpose,waypoints) if w == "N" else
+                                 (plan_O(wpose,waypoints) if w == "O" else
+                                 (plan_P(wpose,waypoints) if w == "P" else
+                                 (plan_Q(wpose,waypoints) if w == "Q" else
+                                 (plan_R(wpose,waypoints) if w == "R" else
+                                 (plan_S(wpose,waypoints) if w == "S" else
+                                 (plan_T(wpose,waypoints) if w == "T" else
+                                 (plan_U(wpose,waypoints) if w == "U" else
+                                 (plan_V(wpose,waypoints) if w == "V" else
+                                 (plan_W(wpose,waypoints) if w == "W" else
+                                 (plan_X(wpose,waypoints) if w == "X" else
+                                 (plan_Y(wpose,waypoints) if w == "Y" else
+                                 (plan_Z(wpose,waypoints) if w == "Z" else 
+                                 (plan_1(wpose,waypoints) if w == "1" else 
+                                 (plan_2(wpose,waypoints) if w == "2" else 
+                                 (plan_3(wpose,waypoints) if w == "3" else 
+                                 (plan_4(wpose,waypoints) if w == "4" else 
+                                 (plan_5(wpose,waypoints) if w == "5" else 
+                                 (plan_6(wpose,waypoints) if w == "6" else 
+                                 (plan_7(wpose,waypoints) if w == "7" else 
+                                 (plan_8(wpose,waypoints) if w == "8" else 
+                                 (plan_9(wpose,waypoints) if w == "9" else 
+                                 (plan_0(wpose,waypoints) if w == "0" else 
+                                 (plan_space (wpose,waypoints) if w == " " else                               
+                                 (plan_plus  (wpose,waypoints) if w == "+" else 
+                                 (plan_minus (wpose,waypoints) if w == "-" else 
+                                 (plan_times (wpose,waypoints) if w == "*" else 
+                                 (plan_divide(wpose,waypoints) if w == "/" else
+                                 (plan_equal (wpose,waypoints) if w == "=" else 
+                                 (plan_left_parenthesis (wpose,waypoints) if w == "(" else 
+                                 (plan_right_parenthesis(wpose,waypoints) if w == ")" else 
+                                 (plan_exclamation(wpose, waypoints) if w == "!" else
+                                 [])))))))))))))))))))))))))))))))))))))))))))))
+        waypoints = (plane_rotation(waypoints) if theta != 0 else waypoints)
+            
+        data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
+        rospy.sleep(1)
 
-    x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
-    #Moviendo lápiz a la posición inicial
-    (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h, pen + 0.02)
+        plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
 
-    for w in word:
-        (waypoints, wpose) = (plan_A(wpose,waypoints) if w == "A" else
-                             (plan_B(wpose,waypoints) if w == "B" else
-                             (plan_C(wpose,waypoints) if w == "C" else
-                             (plan_D(wpose,waypoints) if w == "D" else
-                             (plan_E(wpose,waypoints) if w == "E" else
-                             (plan_F(wpose,waypoints) if w == "F" else
-                             (plan_G(wpose,waypoints) if w == "G" else
-                             (plan_H(wpose,waypoints) if w == "H" else
-                             (plan_I(wpose,waypoints) if w == "I" else
-                             (plan_J(wpose,waypoints) if w == "J" else
-                             (plan_K(wpose,waypoints) if w == "K" else
-                             (plan_L(wpose,waypoints) if w == "L" else
-                             (plan_M(wpose,waypoints) if w == "M" else
-                             (plan_N(wpose,waypoints) if w == "N" else
-                             (plan_O(wpose,waypoints) if w == "O" else
-                             (plan_P(wpose,waypoints) if w == "P" else
-                             (plan_Q(wpose,waypoints) if w == "Q" else
-                             (plan_R(wpose,waypoints) if w == "R" else
-                             (plan_S(wpose,waypoints) if w == "S" else
-                             (plan_T(wpose,waypoints) if w == "T" else
-                             (plan_U(wpose,waypoints) if w == "U" else
-                             (plan_V(wpose,waypoints) if w == "V" else
-                             (plan_W(wpose,waypoints) if w == "W" else
-                             (plan_X(wpose,waypoints) if w == "X" else
-                             (plan_Y(wpose,waypoints) if w == "Y" else
-                             (plan_Z(wpose,waypoints) if w == "Z" else 
-                             (plan_1(wpose,waypoints) if w == "1" else 
-                             (plan_2(wpose,waypoints) if w == "2" else 
-                             (plan_3(wpose,waypoints) if w == "3" else 
-                             (plan_4(wpose,waypoints) if w == "4" else 
-                             (plan_5(wpose,waypoints) if w == "5" else 
-                             (plan_6(wpose,waypoints) if w == "6" else 
-                             (plan_7(wpose,waypoints) if w == "7" else 
-                             (plan_8(wpose,waypoints) if w == "8" else 
-                             (plan_9(wpose,waypoints) if w == "9" else 
-                             (plan_0(wpose,waypoints) if w == "0" else 
-                             (plan_space(wpose,waypoints) if w == " " else                               
-                             (plan_plus (wpose,waypoints) if w == "+" else 
-                             (plan_minus(wpose,waypoints) if w == "-" else 
-                             (plan_times(wpose,waypoints) if w == "*" else 
-                             (plan_divide(wpose,waypoints) if w == "/" else
-                             (plan_equal(wpose,waypoints) if w == "=" else 
-                             (plan_left_parenthesis(wpose,waypoints) if w == "(" else 
-                             (plan_right_parenthesis(wpose,waypoints) if w == ")" else 
-                             []))))))))))))))))))))))))))))))))))))))))))))
-    waypoints = (plane_rotation(waypoints) if theta != 0 else waypoints)
-        
-    data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
-    rospy.sleep(1)
+        display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+        display_trajectory.trajectory_start = robot.get_current_state()
+        display_trajectory.trajectory.append(plan)
+        # Publish
+        display_trajectory_publisher.publish(display_trajectory)
 
-    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+        group.execute(plan, wait=True)
+        rospy.loginfo("Planning succesfully executed.\n")
+        rospy.sleep(1)
+        data_writing_publisher.publish("_none")
+    else:
+        rospy.logerr("The word has too many letters.")
+    home()
 
-    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    display_trajectory.trajectory_start = robot.get_current_state()
-    display_trajectory.trajectory.append(plan)
-    # Publish
-    display_trajectory_publisher.publish(display_trajectory)
+if __name__ == "__main__":
 
-    group.execute(plan, wait=True)
-    rospy.loginfo("Planning succesfully executed.\n")
-    rospy.sleep(1)
-    data_writing_publisher.publish("_none")
-else:
-    rospy.logerr("The word has too many letters.")
-home()
+    #By executing this file we can make the robot move to several preconfigured positions in Cartesian coordinates, in the order in which they are in the file
+    moveit_commander.roscpp_initialize(sys.argv)
+    rospy.init_node('planing_node', anonymous=True)
+    rate = rospy.Rate(10)
+
+    word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
+
+    write(word)
+
