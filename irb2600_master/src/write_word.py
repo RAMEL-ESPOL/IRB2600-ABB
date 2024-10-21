@@ -28,7 +28,7 @@ theta = 0
 #theta = -90 #pizarra
 
 global t
-t = 0.1
+t = 0.01
 
 #Altura máxima a la que llegará cada letra en Y
 global y_h 
@@ -1085,7 +1085,7 @@ def plan_divide(wpose, waypoints : list):
 
     (wpose, waypoints) = up_pen(wpose, waypoints)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, 0.25*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, 0.3*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints)
 
