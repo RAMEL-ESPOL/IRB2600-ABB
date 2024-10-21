@@ -1224,7 +1224,7 @@ def write(word: str, y_h2: float = y_h, size2: float = size, space2: float = spa
         #Moviendo lápiz a la posición inicial
         (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h, pen + 0.02)
 
-        for w in word:
+        for w in word.upper():
             (waypoints, wpose) = (plan_A(wpose,waypoints) if w == "A" else
                                  (plan_B(wpose,waypoints) if w == "B" else
                                  (plan_C(wpose,waypoints) if w == "C" else
