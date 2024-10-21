@@ -20,15 +20,22 @@ if __name__ == "__main__":
     rospy.init_node('class_node', anonymous=True)
     rate = rospy.Rate(10)
 
+    robot = moveit_commander.RobotCommander()
+    scene = moveit_commander.PlanningSceneInterface()    
+    group = moveit_commander.MoveGroupCommander("irb2600_arm")
+    display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
+    data_writing_publisher       = rospy.Publisher('/figure_writing', String, queue_size=2)
+
+
     write_word.home()
 
-    write_word.write("y=2(x+4)")
+    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)")
 
-    write_word.write("y=2x+8", 0.9)
+    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2x+8", 0.9)
 
-    write_word.write("Ecuacion factorizada!", 0.8)
+    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Ec factorized!", 0.8)
 
-    write_word.write("23", 0.7, 0.01)
+    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "23", 0.7, 0.01)
 
     
 
