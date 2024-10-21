@@ -48,6 +48,7 @@ rmatrix = SE3.Ry(theta,'deg')
 
 #Altura cuando se levanta el l
 def home():
+    group = moveit_commander.MoveGroupCommander("irb2600_arm")
     # We get the joint values from the group and change some of the values:
     joint_goal = group.get_current_joint_values()
     joint_goal[0] = 0
