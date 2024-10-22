@@ -1179,7 +1179,7 @@ def plan_(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
     return (waypoints, wpose)
 
 
-def write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, word: str, y_h2: float = 1.0, size2: float = 0.07, space2: float = 0.01, pen: float = 1, theta: float = 0, t : float = 0.001):
+def write(wpose, waypoints: list, robot, scene, group, display_trajectory_publisher, data_writing_publisher, word: str, y_h2: float = 1.0, x_i: float = -0.75, size2: float = 0.07, space2: float = 0.01, pen: float = 1, theta: float = 0, t : float = 0.001):
     """Función para escribir una palabra enviando todos los parámetros necesarios para esto, no es necesario enviar pen y theta como parámetros"""
     size  = size2
     y_h   = y_h2
@@ -1187,12 +1187,13 @@ def write(robot, scene, group, display_trajectory_publisher, data_writing_publis
     data_writing_publisher.publish(("_none," + str(pen)))
     # Calling ``stop()`` ensures that there is no residual movement
     group.stop()
-    wpose = group.get_current_pose().pose
+    # wpose = group.get_current_pose().pose
+
 
     if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 1.5):
-        waypoints = []
+        # waypoints = []
 
-        x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
+        # x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
         #Moviendo lápiz a la posición inicial
         (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h2, pen + 0.02)
 
@@ -1241,27 +1242,19 @@ def write(robot, scene, group, display_trajectory_publisher, data_writing_publis
                                  (plan_equal (wpose,waypoints,size2,space2,y_h2,pen) if w == "=" else 
                                  (plan_left_parenthesis (wpose,waypoints,size2,space2,y_h2,pen) if w == "(" else 
                                  (plan_right_parenthesis(wpose,waypoints,size2,space2,y_h2,pen) if w == ")" else 
-                                 (plan_exclamation(wpose,waypoints,size2,space2,y_h2,pen) if w == "!" else
+                                 (plan_exclamation      (wpose,waypoints,size2,space2,y_h2,pen) if w == "!" else
                                  [])))))))))))))))))))))))))))))))))))))))))))))
         waypoints = (plane_rotation(waypoints, theta) if theta != 0 else waypoints)
-            
+
         data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
         rospy.sleep(1)
 
-        plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
 
-        display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-        display_trajectory.trajectory_start = robot.get_current_state()
-        display_trajectory.trajectory.append(plan)
-        # Publish
-        display_trajectory_publisher.publish(display_trajectory)
-
-        group.execute(plan, wait=True)
-        rospy.loginfo("Planning succesfully executed.\n")
-        rospy.sleep(1)
-        data_writing_publisher.publish("_none")
+        return (waypoints, wpose)
+            
     else:
         rospy.logerr("The word has too many letters.")
+        return ([], wpose)
 
 if __name__ == "__main__":
 
@@ -1311,5 +1304,19 @@ if __name__ == "__main__":
 
     word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
 
-    write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, word)
+    (waypoints, wpose) = write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, word)
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    data_writing_publisher.publish("_none")
+
 
