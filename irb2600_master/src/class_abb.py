@@ -27,16 +27,35 @@ if __name__ == "__main__":
     data_writing_publisher       = rospy.Publisher('/figure_writing', String, queue_size=2)
 
 
+    waypoints = []
+
     write_word.home()
 
-    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)")
+    wpose = group.get_current_pose().pose
 
-    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2x+8", 0.9)
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y")
 
-    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Ec factorized!", 0.8)
+    print(wpose.position.y)
 
-    write_word.write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, "23", 0.7, 0.01)
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", 1, -wpose.position.y, 0.025 )
 
-    
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)")
 
-    
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2x+8", 0.9)
+
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Ec factorized!", 0.8)
+
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "23", 0.7, 0.01)
+
+    plan  = group.compute_cartesian_path(waypoints, 0.001, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    data_writing_publisher.publish("_none")
