@@ -229,11 +229,11 @@ def plan_E(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size*0.5)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.15*size, size*0.5)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.85*size, 0)
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
@@ -1010,7 +1010,7 @@ def plan_plus(wpose, waypoints : list, size: float, space: float, y_h: float, pe
 
 def plan_times(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.25*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.1*size, -0.25*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
@@ -1172,6 +1172,277 @@ def plan_exclamation(wpose, waypoints : list, size: float, space: float, y_h: fl
     return (waypoints, wpose)
 
 
+def square(wpose, waypoints: list):
+    square_size = size
+    figure = "Square (" + str(square_size) + "x" + str(square_size) + ")"
+    figure_message = "_square"
+    
+    (wpose, waypoints) = set_pen(wpose, waypoints, -square_size/2, y_h, pen + 0.02)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -square_size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, square_size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, y_h)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, -square_size, 0)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+        
+    return waypoints, wpose, figure, figure_message
+
+
+def triangle(wpose, waypoints: list, data_writing_publisher, size: float, x_i: float,  y_h: float, pen: float, theta: float = 0):
+
+    (wpose, waypoints) = set_pen(wpose, waypoints, x_i, y_h, pen + 0.02)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints, pen)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size*math.cos(60*math.pi/180), -size*math.sin(60*math.pi/180))
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size*math.cos(60*math.pi/180), y_h, 1)
+    
+    (wpose, waypoints) = up_pen(wpose, waypoints, pen)
+        
+    waypoints = (plane_rotation(waypoints, theta) if theta != 0 else waypoints)
+
+    data_writing_publisher.publish("_" + str("triangle").lower() + "," + str(pen))
+
+
+    return (waypoints, wpose)
+
+
+
+def circle(wpose, waypoints: list):
+    r = size/2
+    figure = "Circle ( " + str(r) + " )"
+    center_y = y_h - r
+    center_x = 0 
+    figure_message = "_circle"
+
+    (wpose, waypoints) = set_pen(wpose, waypoints, 0, y_h, pen + 0.02)
+    
+    (wpose, waypoints) = plan_circle(center_x, center_y, r, 90, 450, wpose, waypoints, 1, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+        
+    return waypoints, wpose, figure, figure_message
+
+
+def espol_logo(wpose, waypoints: list):
+    figure = "ESPOL (LOGO)"
+    r = size/2
+    figure_message = "_espol_logo"
+    
+    (wpose, waypoints) = set_pen(wpose, waypoints, -(2*(size + space)) - r, y_h, pen + 0.02)
+    
+    #Planeamiento de la "e"
+    (wpose, waypoints) = move_pen(wpose, waypoints, r, -r)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x, wpose.position.y, r, 45, 270, wpose, waypoints , 1 , 1)
+
+    #Planemiento de la "s"
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + r, y_h)
+    
+    (wpose, waypoints) = plan_circle(wpose.position.x, wpose.position.y - r, r, 90, 290, wpose, waypoints , 0 , 1)
+    
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + r*(1-math.cos(290 * math.pi/180)), abs(r*math.sin(math.radians(290))))
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    #Planeamiento de la "p"
+    (wpose, waypoints) = plan_circle(wpose.position.x + r, wpose.position.y, r, 0, 360, wpose, waypoints, 0, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size*0.7)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + size, y_h)
+
+    #Planeamiento de la "o"
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -r)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x + r, wpose.position.y, r, 0, 360, wpose, waypoints, 0, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + size, y_h)
+
+    #Planeamiento de la "l"
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, r*0.2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -r*0.2 - r)
+
+    (wpose, waypoints) = plan_circle(wpose.position.x, wpose.position.y + r, r, 180, 270, wpose, waypoints, 1, 1)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+        
+    return waypoints, wpose, figure, figure_message
+
+
+def espol(wpose, waypoints : list):
+    figure = "ESPOL"
+    figure_message = "_espol"
+
+    (wpose, waypoints) = set_pen(wpose, waypoints, -(2*(space + size)) - size/2 + size, y_h, pen + 0.002)
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    #Drawing the "E"
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, 0.007, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.007)
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+    
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+    
+
+    #Drawing the "S"
+    (wpose, waypoints) = move_pen(wpose, waypoints, 2*size + space, y_h)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+
+    (wpose, waypoints) = pen_up_down(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, 0.01, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.01)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+    
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + size, y_h)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    #Drawing the "P"
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2)
+    
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = pen_up_down(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space + size, y_h)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    
+    #Drawing the "O"
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = pen_up_down(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, -size, size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, space, y_h)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    
+    #Drawing the "L"
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, size/2, pen + 0.02)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -size/2)
+
+    (wpose, waypoints) = down_pen(wpose, waypoints)
+
+    (wpose, waypoints) = move_pen(wpose, waypoints, size, 0)
+
+    (wpose, waypoints) = up_pen(wpose, waypoints)
+        
+    return waypoints, wpose, figure, figure_message
+
+
 def plan_(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
 
     (wpose, waypoints) = move_pen(wpose, waypoints, 0, 0)
@@ -1247,7 +1518,6 @@ def write(wpose, waypoints: list, robot, scene, group, display_trajectory_publis
         waypoints = (plane_rotation(waypoints, theta) if theta != 0 else waypoints)
 
         data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
-        rospy.sleep(1)
 
 
         return (waypoints, wpose)
