@@ -35,7 +35,7 @@ marker.color.r = 0.0
 marker.color.g = 0.0
 marker.color.b = 0.0
 marker.color.a = 1.0
-marker.lifetime = rospy.Duration(10)
+# marker.lifetime = rospy.Duration(10)
 
 #Recibimos del Subscriber un msg de tipo JointState de moveit y posteriormente lo publicamos con el Publisher como goal
 def state_position(goal_state: JointState):
@@ -52,7 +52,7 @@ def plan_marker():
     global pen
     pose = group.get_current_pose(group.get_end_effector_link())
 
-    if (pose.pose.position.z <= pen + 0.005) and (pose.pose.position.z >= pen - 0.005):
+    if (pose.pose.position.z <= pen + 0.001) and (pose.pose.position.z >= pen - 0.001):
         p = Point() 
         p = pose.pose.position
         p.z = 0.25
