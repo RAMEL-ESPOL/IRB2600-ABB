@@ -229,7 +229,7 @@ Visualization Manager:
       Name: MarkerArray
       Namespaces:
         "": true
-      Queue Size: 100
+      Queue Size: 10000
       Value: true
   Enabled: true
   Global Options:
