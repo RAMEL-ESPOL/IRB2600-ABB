@@ -36,12 +36,12 @@ if __name__ == "__main__":
     t = 0.0001
     # t = 0.01
 
-    y_h = 1.4 
+    y_h = 1.45
     #y_h = 1.5 #pizarra
 
     size = 0.055
 
-    space = 0.2*size
+    space = 0.3*size
 
     x_i = -0.5
     
@@ -51,15 +51,19 @@ if __name__ == "__main__":
 
     wpose = group.get_current_pose().pose
 
-    (waypoints, wpose) = write_word.triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h, pen, theta , )
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Matematicas", y_h , -1*(len("Matematicas")/2 * (size + space)), 2*size, space, pen, theta, t )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=b*h/2", y_h + 0.05, x_i + 0.2, size, space, pen, theta, t )
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "triangulo", y_h - 0.1, -1*(len("triangulo")/2 * (size + space)), 1.5*size, space, pen, theta, t )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=20*17/2", y_h - 0.05, x_i + 0.2, size, space, pen, theta, t )
+    (waypoints, wpose) = write_word.triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h - 0.3, pen, theta )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.15, x_i + 0.2, size, space, pen, theta, t )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=b*h/2", y_h -0.25, x_i + 0.2, size, space, pen, theta, t )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", y_h - 0.15, -wpose.position.y, size*0.4, space, pen, theta, t )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=20*17/2", y_h - 0.35, x_i + 0.2, size, space, pen, theta, t )
+
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.45, x_i + 0.2, size, space, pen, theta, t )
+
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", y_h - 0.42, -wpose.position.y, size*0.4, space, pen, theta, t )
 
     # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)", y_h, x_i, size, space, pen, theta, t )
 

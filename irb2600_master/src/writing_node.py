@@ -35,7 +35,7 @@ marker.color.r = 0.0
 marker.color.g = 0.0
 marker.color.b = 0.0
 marker.color.a = 1.0
-# marker.lifetime = rospy.Duration(10)
+marker.lifetime = rospy.Duration(10)
 
 #Recibimos del Subscriber un msg de tipo JointState de moveit y posteriormente lo publicamos con el Publisher como goal
 def state_position(goal_state: JointState):
@@ -46,10 +46,15 @@ def state_position(goal_state: JointState):
         marker.points.clear()
         marker_array.markers.append(marker)
 
+global marker_id
+marker_id = 0
+
 def plan_marker():
     global marker_array
     global marker
     global pen
+    global marker_id
+    
     pose = group.get_current_pose(group.get_end_effector_link())
 
     if (pose.pose.position.z <= pen + 0.001) and (pose.pose.position.z >= pen - 0.001):
@@ -58,8 +63,18 @@ def plan_marker():
         p.z = 0.25
         
         marker.points.append(p)
+        marker.id = marker_id
         marker_array.markers.append(marker)
+
+        # Publicamos solo el último punto para mantener el rendimiento
+        marker_array.markers = [marker]
         marker_pub.publish(marker_array)
+
+        rospy.sleep(0.01)  # Ajusta este valor según la velocidad deseada
+
+        # Incrementamos el ID para el próximo marcador
+        marker_id += 1
+
 
 def figure(data_figure : str):
     global fig
@@ -74,7 +89,7 @@ if __name__ == "__main__":
     rospy.sleep(2)
     rospy.init_node("writing_node")
     moveit_commander.roscpp_initialize(sys.argv)
-    marker_pub      = rospy.Publisher("/visualization_marker_array", MarkerArray, queue_size = 2)
+    marker_pub      = rospy.Publisher("/visualization_marker_array", MarkerArray, queue_size = 10000)
     subGoalState    = rospy.Subscriber("/joint_states", JointState, callback = state_position)
     subWritingData  = rospy.Subscriber("/figure_writing", String, callback = figure)
     group           = moveit_commander.MoveGroupCommander("irb2600_arm")

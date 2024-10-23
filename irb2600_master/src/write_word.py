@@ -1026,7 +1026,7 @@ def plan_times(wpose, waypoints : list, size: float, space: float, y_h: float, p
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 2.5*space, y_h, 1)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 1.5*space, y_h, 1)
 
     return (waypoints, wpose)
 
@@ -1059,7 +1059,7 @@ def plan_circle( center_x : float , center_y : float , r : float , theta_o : flo
 
 def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + space/2, -0.25*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + space/2, -0.2*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
@@ -1067,7 +1067,7 @@ def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, 
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
     
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.5*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0, -0.6*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
@@ -1075,7 +1075,7 @@ def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, 
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size + space/2, 0.3*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.3*size + space/2, 0.3*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
@@ -1461,7 +1461,7 @@ def write(wpose, waypoints: list, robot, scene, group, display_trajectory_publis
     # wpose = group.get_current_pose().pose
 
 
-    if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 1.5):
+    if ((((space + size)*len(word)) - (space/2 + size/2)*(word.count("+") + word.count("-") + word.count(" ") + word.count("*") + word.count("/") + word.count("(") + word.count(")"))) <= 2):
         # waypoints = []
 
         # x_i = -1*(len(word)/2 * (size + space))#Cálculo de la posición inicial del lápiz
