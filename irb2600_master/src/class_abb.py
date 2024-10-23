@@ -27,19 +27,41 @@ if __name__ == "__main__":
     data_writing_publisher       = rospy.Publisher('/figure_writing', String, queue_size=2)
 
 
+    pen = 1
+    #pen = -1.3 #pizarra
+
+    theta = 0
+    #theta = -90 #pizarra
+
+    t = 0.0001
+    # t = 0.01
+
+    y_h = 1.4 
+    #y_h = 1.5 #pizarra
+
+    size = 0.055
+
+    space = 0.2*size
+
+    x_i = -0.5
+    
     waypoints = []
 
     write_word.home()
 
     wpose = group.get_current_pose().pose
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y")
+    (waypoints, wpose) = write_word.triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h, pen, theta , )
 
-    print(wpose.position.y)
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=b*h/2", y_h + 0.05, x_i + 0.2, size, space, pen, theta, t )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", 1, -wpose.position.y, 0.025 )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=20*17/2", y_h - 0.05, x_i + 0.2, size, space, pen, theta, t )
 
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)")
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.15, x_i + 0.2, size, space, pen, theta, t )
+
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", y_h - 0.15, -wpose.position.y, size*0.4, space, pen, theta, t )
+
+    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)", y_h, x_i, size, space, pen, theta, t )
 
     # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2x+8", 0.9)
 
@@ -47,7 +69,7 @@ if __name__ == "__main__":
 
     # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "23", 0.7, 0.01)
 
-    plan  = group.compute_cartesian_path(waypoints, 0.001, 0.0)[0]
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
 
     display_trajectory = moveit_msgs.msg.DisplayTrajectory()
     display_trajectory.trajectory_start = robot.get_current_state()
