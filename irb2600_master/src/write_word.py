@@ -17,9 +17,10 @@ from spatialmath import SE3, SO3
 
 #Altura cuando se levanta el l
 def home():
-    group = moveit_commander.MoveGroupCommander("irb2600_arm")
     # We get the joint values from the group and change some of the values:
-    joint_goal = group.get_current_joint_values()
+
+    group = moveit_commander.MoveGroupCommander("irb2600_arm")
+    joint_goal = [0,0,0,0,0,0]
     joint_goal[0] = 0
     joint_goal[1] = 0
     joint_goal[2] = 0
@@ -32,12 +33,28 @@ def home():
     group.go(joint_goal, wait=True)
     rospy.loginfo("The robotic arm is at home position.")
 
-def joint_move(joint_goal: list):
+def joint_move(j0, j1, j2, j3, j4, j5):
+    # Set the target joint values
+
     group = moveit_commander.MoveGroupCommander("irb2600_arm")
-    # The go command can be called with joint values, poses, or without any
-    # parameters if you have already set the pose or joint target for the group
-    group.go(joint_goal, wait=True)
-    rospy.loginfo("The robotic arm is at home position.")
+    group.set_joint_value_target([j0, j1, j2, j3, j4, j5])
+    
+    # Plan the trajectory
+    success, plan, _, _ = group.plan()
+
+    # Check if the plan is successful
+    if success and len(plan.joint_trajectory.points) > 0:
+        group.execute(plan, wait=True)
+    else:
+        rospy.logerr("Failed to generate a valid plan for the joint values provided.")
+    rospy.sleep(0.10)
+
+# def joint_move(joint_goal: list):
+#     group = moveit_commander.MoveGroupCommander("irb2600_arm")
+#     # The go command can be called with joint values, poses, or without any
+#     # parameters if you have already set the pose or joint target for the group
+#     group.go(joint_goal, wait=True)
+#     rospy.loginfo("The robotic arm is at home position.")
 
 
 def loginfog(msg: str):
