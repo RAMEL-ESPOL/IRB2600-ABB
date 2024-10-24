@@ -28,8 +28,8 @@ marker = Marker()
 marker.header.frame_id = "base_link"
 marker.type = marker.POINTS
 marker.action = marker.ADD
-marker.scale.x = 0.0055
-marker.scale.y = 0.0055
+marker.scale.x = 0.0045
+marker.scale.y = 0.0045
 marker.scale.z = 0
 marker.color.r = 0.0
 marker.color.g = 0.0
@@ -70,7 +70,7 @@ def plan_marker():
         marker_array.markers = [marker]
         marker_pub.publish(marker_array)
 
-        rospy.sleep(0.01)  # Ajusta este valor según la velocidad deseada
+        rospy.sleep(0.001)  # Ajusta este valor según la velocidad deseada
 
         # Incrementamos el ID para el próximo marcador
         marker_id += 1
