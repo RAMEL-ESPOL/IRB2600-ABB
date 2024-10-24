@@ -28,12 +28,12 @@ if __name__ == "__main__":
 
 
     pen = 1
-    #pen = -1.3 #pizarra
+    pen = -1.3 #pizarra
 
     theta = 0
-    #theta = -90 #pizarra
+    theta = -90 #pizarra
 
-    t = 0.0001
+    t = 0.03
     # t = 0.01
 
     y_h = 1.45
@@ -51,29 +51,40 @@ if __name__ == "__main__":
 
     wpose = group.get_current_pose().pose
 
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Matematicas", y_h , -1*(len("Matematicas")/2 * (size + space)), 2*size, space, pen, theta, t )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "math class", y_h , -1*((len("math class")/2) * (size + space)), 1.2*size, space, pen, theta, t )
 
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "triangulo", y_h - 0.1, -1*(len("triangulo")/2 * (size + space)), 1.5*size, space, pen, theta, t )
+    plan  = group.compute_cartesian_path(waypoints, t, True)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    data_writing_publisher.publish("_none")
+
+    write_word.joint_move([1.57, 0, 0, 0, 0, 0])
+
+    waypoints = []
+
+
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "triangle area", y_h - 0.1, -1*((len("triangle area"))/2 * (size + space)), 1.2*size, space, pen, theta, t )
 
     (waypoints, wpose) = write_word.triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h - 0.3, pen, theta )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=b*h/2", y_h -0.25, x_i + 0.2, size, space, pen, theta, t )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(b*h)/2", y_h -0.25, x_i + 0.2, size, space, pen, theta, t )
 
-    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=20*17/2", y_h - 0.35, x_i + 0.2, size, space, pen, theta, t )
+    (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(20*17)/2", y_h - 0.35, x_i + 0.2, size, space, pen, theta, t )
+
 
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.45, x_i + 0.2, size, space, pen, theta, t )
 
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", y_h - 0.42, -wpose.position.y, size*0.4, space, pen, theta, t )
 
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2(x+4)", y_h, x_i, size, space, pen, theta, t )
-
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "y=2x+8", 0.9)
-
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "Ec factorized!", 0.8)
-
-    # (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "23", 0.7, 0.01)
-
-    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+    plan  = group.compute_cartesian_path(waypoints, t, True)[0]
 
     display_trajectory = moveit_msgs.msg.DisplayTrajectory()
     display_trajectory.trajectory_start = robot.get_current_state()
