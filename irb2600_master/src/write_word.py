@@ -24,9 +24,16 @@ def home():
     joint_goal[1] = 0
     joint_goal[2] = 0
     joint_goal[3] = 0
-    joint_goal[4] = 1.57
+    joint_goal[4] = 0
     joint_goal[5] = 0
 
+    # The go command can be called with joint values, poses, or without any
+    # parameters if you have already set the pose or joint target for the group
+    group.go(joint_goal, wait=True)
+    rospy.loginfo("The robotic arm is at home position.")
+
+def joint_move(joint_goal: list):
+    group = moveit_commander.MoveGroupCommander("irb2600_arm")
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
     group.go(joint_goal, wait=True)
@@ -73,7 +80,7 @@ def down_pen(wpose, waypoints : list, pen):
     return wpose, waypoints
 
 
-def plane_rotation(waypoints : list):
+def plane_rotation(waypoints : list, theta):
     rmatrix = SE3.Ry(theta,'deg')
     way = []
     for i in range(len(waypoints)):
@@ -1059,11 +1066,11 @@ def plan_circle( center_x : float , center_y : float , r : float , theta_o : flo
 
 def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, pen):
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 0.25*size + space/2, -0.2*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 0.15*size + 0.05*size, -0.2*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 0, 1)
+    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, 0.05*size, 0, 360, wpose, waypoints, 0, 1)
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
     
@@ -1071,11 +1078,11 @@ def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, 
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, space/2, 0, 360, wpose, waypoints, 0, 1)
+    (wpose, waypoints) = plan_circle(wpose.position.x + space/2, wpose.position.y, 0.05*size, 0, 360, wpose, waypoints, 0, 1)
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, -0.3*size + space/2, 0.3*size)
+    (wpose, waypoints) = move_pen(wpose, waypoints, -0.25*size, 0.35*size)
 
     (wpose, waypoints) = down_pen(wpose, waypoints, pen)
 
@@ -1083,7 +1090,7 @@ def plan_divide(wpose, waypoints : list, size: float, space: float, y_h: float, 
 
     (wpose, waypoints) = up_pen(wpose, waypoints, pen)
 
-    (wpose, waypoints) = move_pen(wpose, waypoints, 2.5*space, y_h, 1)
+    (wpose, waypoints) = move_pen(wpose, waypoints, 1.5*space, y_h, 1)
 
     return (waypoints, wpose)
 
