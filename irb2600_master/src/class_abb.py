@@ -33,11 +33,11 @@ if __name__ == "__main__":
     #theta = 0
     theta = -90 #pizarra
 
-    t = 0.03
+    t = 0.3
     # t = 0.01
 
-    y_h = 1.45
-    #y_h = 1.5 #pizarra
+    #y_h = 1.3
+    y_h = 1.5 #pizarra
 
     size = 0.055
 
@@ -49,52 +49,21 @@ if __name__ == "__main__":
 
     write_word.home()
 
+    write_word.joint_move(0.8, 0.4, 0.241, 0, 0.8, 0)
 
-    write_word.joint_move(1.153, 0.34, 0.252, 0, 0.156, 0)
+    write_word.home()
 
     wpose = group.get_current_pose().pose
 
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "math class", y_h , -1*((len("math class")/2) * (size + space)), 1.2*size, space, pen, theta, t )
 
-    plan  = group.compute_cartesian_path(waypoints, t, 0)[0]
-
-    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    display_trajectory.trajectory_start = robot.get_current_state()
-    display_trajectory.trajectory.append(plan)
-    # Publish
-    display_trajectory_publisher.publish(display_trajectory)
-
-    group.execute(plan, wait=True)
-    rospy.loginfo("Planning succesfully executed.\n")
-    rospy.sleep(1)
-    data_writing_publisher.publish("_none")
-
-    waypoints = []
-
-
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "triangle area", y_h - 0.1, -1*((len("triangle area"))/2 * (size + space)), 1.2*size, space, pen, theta, t )
 
     (waypoints, wpose) = write_word.triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h - 0.3, pen, theta )
     
-    plan  = group.compute_cartesian_path(waypoints, t, 0)[0]
-
-    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    display_trajectory.trajectory_start = robot.get_current_state()
-    display_trajectory.trajectory.append(plan)
-    # Publish
-    display_trajectory_publisher.publish(display_trajectory)
-
-    group.execute(plan, wait=True)
-    rospy.loginfo("Planning succesfully executed.\n")
-
-    write_word.joint_move(1.153, 0.34, 0.252, 0, 0.156, 0)
-
-    waypoints = []
-
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(b*h)/2", y_h -0.25, x_i + 0.2, size, space, pen, theta, t )
 
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(20*17)/2", y_h - 0.35, x_i + 0.2, size, space, pen, theta, t )
-
 
     (waypoints, wpose) = write_word.write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.45, x_i + 0.2, size, space, pen, theta, t )
 
@@ -113,8 +82,9 @@ if __name__ == "__main__":
 
     rospy.sleep(1)
 
+    write_word.home()
 
-    write_word.joint_move(1.153, 0.34, 0.252, 0, 0.156, 0)
+    write_word.joint_move(0.8, 0.4, 0.241, 0, 0.8, 0)
 
     write_word.home()
 

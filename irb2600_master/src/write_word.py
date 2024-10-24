@@ -18,8 +18,6 @@ from spatialmath import SE3, SO3
 #Altura cuando se levanta el l
 def home():
     # We get the joint values from the group and change some of the values:
-
-    group = moveit_commander.MoveGroupCommander("irb2600_arm")
     joint_goal = [0,0,0,0,0,0]
     joint_goal[0] = 0
     joint_goal[1] = 0
@@ -35,8 +33,6 @@ def home():
 
 def joint_move(j0, j1, j2, j3, j4, j5):
     # Set the target joint values
-
-    group = moveit_commander.MoveGroupCommander("irb2600_arm")
     group.set_joint_value_target([j0, j1, j2, j3, j4, j5])
     
     # Plan the trajectory
@@ -1539,6 +1535,7 @@ def write(wpose, waypoints: list, robot, scene, group, display_trajectory_publis
                                  (plan_right_parenthesis(wpose,waypoints,size2,space2,y_h2,pen) if w == ")" else 
                                  (plan_exclamation      (wpose,waypoints,size2,space2,y_h2,pen) if w == "!" else
                                  [])))))))))))))))))))))))))))))))))))))))))))))
+        
         waypoints = (plane_rotation(waypoints, theta) if theta != 0 else waypoints)
 
         data_writing_publisher.publish("_" + str(word).lower() + "," + str(pen))
@@ -1554,34 +1551,37 @@ if __name__ == "__main__":
 
     # Altura del lapiz
     global pen 
-    pen = 1
-    #pen = -1.3 #pizarra
+    #pen = 1
+    pen = -1.3 #pizarra
 
     global quit
     quit = 0
 
     global theta
-    theta = 0
-    #theta = -90 #pizarra
+    #theta = 0
+    theta = -90 #pizarra
 
     global t
-    t = 0.001
+    t = 1
 
     #Altura máxima a la que llegará cada letra en Y
     global y_h 
-    y_h = 1.0 
-    #y_h = 1.5 #pizarra
+    
+    #y_h = 1.0 
+    y_h = 1.7 #pizarra
 
     #Tamaño de cada letra en ancho y alto
     global size
-    size = 0.07
+    size = 0.055
 
     #Espacio entre cada letra
     global space
-    space = 0.01
+    space = 0.3*size
 
     global rmatrix
     rmatrix = SE3.Ry(theta,'deg')
+
+    x_i = -0.5
 
 
     #By executing this file we can make the robot move to several preconfigured positions in Cartesian coordinates, in the order in which they are in the file
@@ -1594,11 +1594,18 @@ if __name__ == "__main__":
     group = moveit_commander.MoveGroupCommander("irb2600_arm")
     display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', moveit_msgs.msg.DisplayTrajectory, queue_size=20)
     data_writing_publisher       = rospy.Publisher('/figure_writing', String, queue_size=2)
+    home()
 
+    joint_move(0.8, 0.4, 0.241, 0, 0.8, 0)
 
-    word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
+    home()
+    rospy.sleep(2)
+    #word = input("\n--------------------\nWrite the word you want the robotic arm write: ").upper()
 
-    (waypoints, wpose) = write(robot, scene, group, display_trajectory_publisher, data_writing_publisher, word)
+    wpose = group.get_current_pose().pose
+    waypoints = []
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "math class", y_h , -1*((len("math class")/2) * (size + space)), 1.2*size, space, pen, theta, t )
 
     plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
 
@@ -1611,6 +1618,110 @@ if __name__ == "__main__":
     group.execute(plan, wait=True)
     rospy.loginfo("Planning succesfully executed.\n")
     rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "triangle area", y_h - 0.1, -1*((len("triangle area"))/2 * (size + space)), 1.2*size, space, pen, theta, t )
+
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+    (waypoints, wpose) = triangle(wpose, waypoints, data_writing_publisher, 0.25, x_i, y_h - 0.3, pen, theta )
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(b*h)/2", y_h -0.25, x_i + 0.2, size, space, pen, theta, t )
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=(20*17)/2", y_h - 0.35, x_i + 0.2, size, space, pen, theta, t )
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "A=170 cm", y_h - 0.45, x_i + 0.2, size, space, pen, theta, t )
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+    waypoints = []
+    wpose = group.get_current_pose().pose
+
+    (waypoints, wpose) = write(wpose, waypoints, robot, scene, group, display_trajectory_publisher, data_writing_publisher, "2", y_h - 0.42, -wpose.position.y, size*0.4, space, pen, theta, t )
+
+    plan  = group.compute_cartesian_path(waypoints, t, 0.0)[0]
+
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    display_trajectory_publisher.publish(display_trajectory)
+
+    group.execute(plan, wait=True)
+    rospy.loginfo("Planning succesfully executed.\n")
+    rospy.sleep(1)
+
+    home()
+
+    joint_move(0.8, 0.4, 0.241, 0, 0.8, 0)
+
+    home()
     data_writing_publisher.publish("_none")
 
 
