@@ -45,13 +45,6 @@ def joint_move(j0, j1, j2, j3, j4, j5):
         rospy.logerr("Failed to generate a valid plan for the joint values provided.")
     rospy.sleep(0.10)
 
-# def joint_move(joint_goal: list):
-#     group = moveit_commander.MoveGroupCommander("irb2600_arm")
-#     # The go command can be called with joint values, poses, or without any
-#     # parameters if you have already set the pose or joint target for the group
-#     group.go(joint_goal, wait=True)
-#     rospy.loginfo("The robotic arm is at home position.")
-
 
 def loginfog(msg: str):
     rospy.loginfo("\033[92m%s\033[0m" % msg)
