@@ -1,4 +1,4 @@
-# IRB2600-ABB
+# IRB2600-ABB-ROS1
 <h1 style="border:none"> RISE ABB IRB-2600 ROS Manipulation Package - Industrial robot for ESPOL</h1>
 &copy; 2022, Francisco Yumbla - Javier Pagalo
 
